@@ -35,6 +35,9 @@ else
     {
         <ul class="col-one">
             <li>
+                <div id = "labelid" name = "labelid" />
+                <div id = "labelsede" name = "labelsede" />
+                <div id = "labelid1" name = "labelid1" />
                 @(Html.Label("Número Familia"))
                 @(Html.Kendo().AutoCompleteFor(p => p.familia.id)
                         .Name("AutocompleteId")
@@ -280,15 +283,41 @@ else
 
 <script type="text/javascript">
     $(document).ready(function () {
-        $("#Form").validate({
-            submitHandler: function (form) {
-                alert(hola);
-                // some other code
-                // maybe disabling submit button
-                // then:
-                $(form).submit();
-            }
+        $('.submit').click(function () {
+            validateForm();
         });
+
+        function validateForm() {
+
+
+            var nameReg = /^[A-Za-z]+$/;
+            var numberReg = /^[0-9]+$/;
+
+            var id = $('#AutocompleteId').val();
+            var finicial = $('#Sede').val();
+            var ffinal = $('#id').val();
+
+            var inputVal = new Array(id, finicial, ffinal);
+
+            var inputMessage = new Array("id", "finicial", "ffinal");
+
+            $('.error').hide();
+
+            if (inputVal[0] == "") {
+                $('#labelid').after('<span class="error"> Please enter your ' + inputMessage[0] + '</span>');
+            }
+            else if (!numberReg.test(names)) {
+                $('#labelid').after('<span class="error"> Numbers only</span>');
+            }
+
+            if (inputVal[1] == "") {
+                $('#labelsede').after('<span class="error"> Please enter your ' + inputMessage[1] + '</span>');
+            }
+
+            if (inputVal[2] == "") {
+                $('#labelid1').after('<span class="error"> Please enter your ' + inputMessage[2] + '</span>');
+            }
+        }   
     });
     
    </script>
