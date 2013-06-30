@@ -1,0 +1,205 @@
+﻿@model Web.Models.Parametros
+@using Web.Models
+
+@{
+    ViewBag.Title = "Mantener Parametros";
+}
+
+<h1>@ViewBag.Title</h1>
+
+<fieldset>
+    <legend>Datos del Formulario</legend>
+    @using (Html.BeginForm("InsertarParametros", "Administracion", FormMethod.Post, new { @id = "Form" }))
+    { 
+        
+        <ul><li>
+                <div class="editor-label">@Html.LabelFor(p => p.id)</div>
+                @Html.TextBoxFor(p => p.id, new { @readonly = "readonly" })
+            </li><li>
+                <div class="editor-label">@Html.LabelFor(p => p.membresia)</div>
+                @Html.TextBoxFor(p => p.membresia)
+            </li><li>
+                <div class="editor-label">@Html.LabelFor(p => p.invitados)</div>
+                @Html.TextBoxFor(p => p.invitados)
+            </li><li>
+               <div class="editor-label">@Html.LabelFor(p => p.pagoInvitado)</div>
+                @Html.TextBoxFor(p => p.pagoInvitado)
+            </li><li>
+               <div class="editor-label">@Html.LabelFor(p => p.multa)</div>
+                @Html.TextBoxFor(p => p.multa)
+            </li><li><div class="editor-label">@Html.LabelFor(p => p.maxReservas)</div>
+                @Html.TextBoxFor(p => p.maxReservas)
+            </li><li>
+                <div class="editor-label">@Html.LabelFor(p => p.vencimiento)</div>
+                @Html.TextBoxFor(p => p.vencimiento)
+            </li><li>
+                <div class="editor-label">@Html.LabelFor(p => p.tiempo)</div>
+                @Html.TextBoxFor(p => p.tiempo)
+            </li>
+        </ul>
+             @Html.TextBoxFor(p => p.estado, new { style = "display: none;" })
+             @Html.TextBoxFor(p => p.fechaIni, new { style = "display: none;" })
+             @Html.TextBoxFor(p => p.fechaFin, new { style = "display: none;" }) 
+        <div id="botones">
+        <input type="button" value= "Limpiar"  id="cancel" onclick="location.href = '@(Url.Action("MantenerParametros", "Administracion"))'" class="button fright"/>
+        <input type="submit" value="Insertar"/>
+        </div>
+    }
+</fieldset>
+
+  <div id="kendotable">
+@(Html.Kendo().Grid<Web.Models.Parametros>()
+    .Name("Grid")
+    .Columns(columns =>
+    {
+        columns.Bound(p => p.id);
+        columns.Bound(p => p.fechaIni).Format("{0:dd/MM/yyyy}");
+        //columns.Bound(p => p.fechaFin).Format("{0:dd/MM/yyyy}");
+        columns.Bound(p => p.membresia).Title("Mensualidad");
+        columns.Bound(p => p.invitados).Title("Invitados por Familia").Width(80);
+        columns.Bound(p => p.pagoInvitado).Title("Pago de Invitado").Width(80);
+        columns.Bound(p => p.multa).Title("Multa");
+        columns.Bound(p => p.vencimiento).Title("Dias vencimiento").Width(80);
+        columns.Bound(p => p.tiempo).Title("Horas por cancha").Width(80);
+        columns.Bound(p => p.maxReservas).Title("Maximo de Reservas").Width(80);
+    
+    })
+     //.Editable(editable => { editable.Mode(GridEditMode.InLine); editable.DisplayDeleteConfirmation("El registro será eliminado ¿Desea continuar?"); })
+     .Pageable()
+     .Sortable()
+     .Selectable()
+     .Filterable(filterable => filterable
+        .Extra(false)
+        .Operators(operators => operators
+            .ForString(str => str.Clear()
+                .Contains("Contiene")
+                .StartsWith("Empezar con")
+                .IsEqualTo("Es igual a")
+                .IsNotEqualTo("Diferente a"))
+            .ForNumber(number => number.Clear()
+                .IsGreaterThan("Es mayor a")
+                .IsLessThan("Es menor a")
+                .IsEqualTo("Es igual a")
+                .IsNotEqualTo("Es diferente a"))
+        )
+    )
+    .DataSource(datasource => datasource
+        .Ajax()
+        .PageSize(6)
+        .Events(events => events.Error("ErrorMessage"))
+        .Model(model => model.Id(p => p.id))
+        .Read(read => read.Action("LeerParametros", "Administracion"))
+            
+    )
+         .Selectable()   
+)
+</div>
+
+@if (ViewData["message"] != null)
+{
+    <script type="text/javascript">
+        alert("@ViewData["message"]");
+    </script>
+}
+
+<script type="text/javascript">
+	function ErrorMessage(e){
+		alert("No se pudo acceder a los datos de la tabla.");
+	}
+</script>
+<script type="text/javascript">
+
+    $("#Form").validate({
+        ignore: "",
+        rules: {
+            membresia: {
+                required: true,
+                number: true,
+                range: [0, 5000]
+            },
+            invitados: {
+                required: true,
+                digits: true,
+                range: [0, 6]
+            },
+            pagoInvitado: {
+                required: true,
+                number: true,
+                range: [0, 500]
+            },
+            multa: {
+                required: true,
+                number: true,
+                range: [0, 1500]
+            },
+            maxReservas: {
+                required: true,
+                number: true,
+                range: [0, 5]
+            },
+            vencimiento: {
+                required: true,
+                digits: true,
+                range: [0, 15]
+
+            },
+            tiempo: {
+                required: true,
+                digits: true,
+                range: [0,3]
+
+            }
+
+        },
+        messages: {
+            membresia: {
+                required: "*Campo obligatorio",
+                number: "Debe ingresar numeros",
+                range: "El pago esta fuera del rango"
+            },
+            invitados: {
+                required: "*Campo obligatorio",
+                digits: "Debe ingresar numeros enteros",
+                range: "El rango permitido es hasta 6 invitados"
+            },
+            pagoInvitado: {
+                required: "*Campo obligatorio",
+                number: "Debe ingresar numeros",
+                range: "El pago esta fuera del rango"
+            },
+            multa: {
+                required: "*Campo obligatorio",
+                number: "Debe ingresar numeros",
+                range: "El pago esta fuera del rango"
+            },
+            maxReservas: {
+                required: "*Campo obligatorio",
+                number: "Debe ingresar numeros",
+                range: "El pago esta fuera del rango"
+            },
+            vencimiento: {
+                required: "*Campo obligatorio",
+                digits: "Debe ingresar numeros enteros",
+                range: "El rango permitido es hasta 15 dias"
+            },
+            tiempo: {
+                required: "*Campo obligatorio",
+                digits: "Debe ingresar numeros enteros",
+                range: "El rango permitido es hasta 3 horas"
+            }
+
+        },
+
+        submitHandler: function ConfirmationBox(form) {
+            var result = confirm("¿Está seguro de realizar los cambios?");
+            if (result == true) {
+                form.submit();
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+
+    });
+</script>

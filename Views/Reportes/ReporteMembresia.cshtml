@@ -1,0 +1,158 @@
+﻿@model Web.Models.ReporteMembresia
+@using Web.Models
+@{
+    ViewBag.Title = "Reporte de Membresia Clubly";
+}
+
+<h3>@ViewBag.Title</h3>
+<fieldset>
+</br>
+<h3 align="center">Reporte de Deudores generados desde el</h3>
+</br>
+
+
+
+
+   <form id="myform">
+    <ul>
+        <li>
+            <div class="editor-label">@Html.LabelFor(p => p.fechainicio)</div>
+            @Html.TextBoxFor(p => p.fechainicio.Date, new { @readonly = "readonly" })
+        </li><li>
+            <div class="editor-label">@Html.LabelFor(p => p.fechafinal)</div>
+            @Html.TextBoxFor(p => p.fechafinal.Date, new { @readonly = "readonly" })
+      
+        </li>
+    </ul>
+    </br>
+    </br>
+    </form> 
+   
+ <div id="kendotable">
+@(Html.Kendo().Grid(Model.DatosDeudores)
+    .Name("Grid")
+    .Columns(columns =>
+    {
+        columns.Bound(p=>p.idFamilia).Sortable(true).Width(180);
+        columns.Bound(p=>p.NombreSocio).Sortable(true).Width(180);
+        columns.Bound(p=>p.ApPaterno).Sortable(true).Width(180);
+        columns.Bound(p => p.ApMaterno).Sortable(true).Width(180);
+        columns.Bound(p => p.DeudaTotalSocio).Sortable(true).Width(180);
+        
+
+    })
+     .Selectable()
+     .Filterable(filterable => filterable
+        .Extra(false)
+        .Operators(operators => operators
+            .ForString(str => str.Clear()
+                .Contains("Contiene")
+                .StartsWith("Empezar con")
+                .IsEqualTo("Es igual a")
+                .IsNotEqualTo("Diferente a"))
+            .ForNumber(number => number.Clear()
+                .IsGreaterThan("Es mayor a")
+                .IsLessThan("Es menor a")
+                .IsEqualTo("Es igual a")
+                .IsNotEqualTo("Es diferente a"))
+        )
+    )
+    .DataSource(datasource => datasource
+        .Ajax()
+        .Events(events => events.Error("ErrorMessage"))
+       // .Model(model => model.Id(p => p.))
+        //.Read(read => read.Action("getTemporadaAlta", "Administracion"))
+          //  .Destroy(update => update.Action("eliminarTemporadaAlta", "Administracion"))
+
+    )
+        
+)
+</div>
+
+    </br>
+    </br>
+     <h1 align="center">Total de Ingresos = @Model.DeudaTotal</h1>   
+     </br>
+    </br>
+
+ <input align="center" type="submit" value="Imprimir Reporte" id= "printButton" runat="server" onclick = "javascript: window.print();" /  >
+
+ </fieldset>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@*     <script type='text/javascript' src='https://www.google.com/jsapi'></script>
+    <script type='text/javascript'>
+        google.load('visualization', '1', { packages: ['table'] });
+        google.setOnLoadCallback(drawTable);
+        function drawTable() {
+            var data = new google.visualization.DataTable();
+            //data.addColumn('number', 'Codigo Familia');
+            data.addColumn('string', 'Nombre');
+            //data.addColumn('string', 'Apellido Paterno');
+            //data.addColumn('string', 'Apellido Materno');
+            //data.addColumn('number', 'Monto Deuda');            
+        
+            for(var i < @Model.DatosDeudores.Count();i++)
+            {
+             var x = @Model.DatosDeudores.ElementAt(i);
+            data.addRows(
+            [x.nombre]
+            );
+            }
+            /*for(int i = 0; i<Models.DatosDeudores.Count())
+            {
+                data.AddRows([
+                ['(Model.DatosDeudores.ElementAt(i).nombre)']
+                ]);
+            }*/
+            
+
+         
+            var table = new google.visualization.Table(document.getElementById('table_div'));
+            table.draw(data, { showRowNumber: true });
+        }
+    </script>
+
+*@
+
+
+
+
+
+
+
+
+
+
+
+

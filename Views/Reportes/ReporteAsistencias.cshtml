@@ -1,0 +1,154 @@
+﻿@model Web.Models.ReporteAsistencia
+@using Web.Models
+@{
+    ViewBag.Title = "ReporteAsistencias";
+}
+
+
+
+<fieldset>
+ <legend>Reporte de Asistencia</legend>  
+@*@using (Html.BeginForm("mostrarComprobanteDePago", "Finanzas", FormMethod.Post, new { @id = "Form" }))
+ {
+    <form id="myform">
+    <ul>
+        <li>
+            <div class="editor-label">@Html.LabelFor(p => p.nombreEmpleado)</div>
+            @Html.TextBoxFor(p => p.nombreEmpleado, new { @readonly = "readonly" })
+      
+        </li><li>
+            <div></div>
+        </li><li>
+            <div class="editor-label">@Html.LabelFor(p => p.fechaI)</div>
+            @Html.TextBoxFor(p => p.fechaI, new { @readonly = "readonly" })
+      
+        </li><li>
+            <div class="editor-label">@Html.LabelFor(p => p.fechaF)</div>
+            @Html.TextBoxFor(p => p.fechaF, new { @readonly = "readonly" })
+        </li><li>
+            <div></div>
+        </li><li>
+            <div></div>
+        </li><li>
+            <div class="editor-label">@Html.LabelFor(p => p.cantDias)</div>
+            @Html.TextBoxFor(p => p.cantDias, new { @readonly = "readonly" })
+        </li><li>
+            <div></div>
+        </li><li>
+            <div class="editor-label">@Html.LabelFor(p => p.cantAsist)</div>
+            @Html.TextBoxFor(p => p.cantAsist, new { @readonly = "readonly" })
+        </li><li>
+            <div></div>
+        </li><li>
+            <div class="editor-label">@Html.LabelFor(p => p.cantFaltas)</div>
+            @Html.TextBoxFor(p => p.cantFaltas, new { @readonly = "readonly" })
+        </li><li>
+            <div></div>
+        </li><li>
+            <div class="editor-label">@Html.LabelFor(p => p.cantHorasCumplidas)</div>
+            @Html.TextBoxFor(p => p.cantHorasCumplidas, new { @readonly = "readonly" })
+        </li> <li>
+            <div></div>
+        </li>  <li>
+            <div class="editor-label">@Html.LabelFor(p => p.cantHorasNoCumplidas)</div>
+            @Html.TextBoxFor(p => p.cantHorasNoCumplidas, new { @readonly = "readonly" })
+        </li>     
+        <li>
+            <div class="editor-label">@Html.LabelFor(p => p.cantFaltaMarcaSalida)</div>
+            @Html.TextBoxFor(p => p.cantFaltaMarcaSalida, new { @readonly = "readonly" })
+        </li>
+    </ul>
+    </form> 
+ }
+*@
+
+<h1>Nombre Empleado : @Model.nombreEmpleado</h1>
+</br>
+@using (Html.BeginForm("mostrarComprobanteDePago", "Finanzas", FormMethod.Post, new { @id = "Form" }))
+ {
+    <form id="myform">
+    <ul>
+        <li>
+            <div class="editor-label">@Html.LabelFor(p => p.fechaI)</div>
+            @Html.TextBoxFor(p => p.fechaI, new { @readonly = "readonly" })
+        </li><li>
+            <div class="editor-label">@Html.LabelFor(p => p.fechaF)</div>
+            @Html.TextBoxFor(p => p.fechaF, new { @readonly = "readonly" })
+      
+        </li><li>
+            <div class="editor-label">@Html.LabelFor(p => p.cantDias)</div>
+            @Html.TextBoxFor(p => p.cantDias, new { @readonly = "readonly" })
+        </li>
+    </ul>
+    </form> 
+ }
+@*Reporte Fecha desde:@Model.fechaI al @Model.fechaF
+</br>*@
+@*Cantidad de Dias a evaluar: @Model.cantDias
+</br>
+Cantidad de Asistencias : @Model.cantAsist
+</br>
+Cantidad de faltas : @Model.cantFaltas
+</br>
+Cantidad de horas cumplidas : @Model.cantHorasCumplidas
+</br>
+Cantidad de horas no cumplidas : @Model.cantHorasNoCumplidas
+</br>
+Cantidad de Dias que no marcó salida = @Model.cantFaltaMarcaSalida
+</br>*@
+</br>
+
+<div id='table_div'></div>
+</br>
+</br>
+
+<center><div id="chart_div" style="width: 450px; height: 300px;"></div></center>
+
+<input align="center" type="submit" value="Imprimir Reporte" id= "printButton" runat="server" onclick = "javascript: window.print();" /  >
+</fieldset>
+
+  <script type='text/javascript' src='https://www.google.com/jsapi'></script>
+    <script type='text/javascript'>
+        google.load('visualization', '1', { packages: ['table'] });
+        google.setOnLoadCallback(drawTable);
+        function drawTable() {
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Parámetro');
+            data.addColumn('number', 'Valor');
+            data.addRows([
+          ['Cantidad de Asistencias', @Model.cantAsist],
+          ['Cantidad de Faltas', @Model.cantFaltas],
+          ['Cantidad de Horas Cumplidas', @Model.cantHorasCumplidas ],
+          ['Cantidad de Horas No Cumplidas', @Model.cantHorasNoCumplidas ],
+          ['Cantidad de Dias que no marcó salida', @Model.cantFaltaMarcaSalida ]
+        ]);
+
+            var table = new google.visualization.Table(document.getElementById('table_div'));
+            table.draw(data, { showRowNumber: true });
+        }
+    </script>
+
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script type="text/javascript">
+google.load("visualization", "1", { packages: ["corechart"] });
+google.setOnLoadCallback(drawChart);
+function drawChart() {
+var data = google.visualization.arrayToDataTable([
+['Parametros', 'Cantidad'],
+['Cantidad de Faltas', @Model.cantFaltas],
+['Cantidad de Asistencias', @Model.cantAsist],
+//['Cantidad de Dias que olvidó marcar salida', @Model.cantFaltaMarcaSalida]
+]);
+//var options = {
+//title: 'Pie Chart Asistencia'
+//};
+var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
+//chart.draw(data, options);
+chart.draw(data, {
+    is3D:true,
+    title : 'Estadística de Asistencia',
+    colors: ['purple', 'green'],
+    backgroundColor : {strokeWidth : 10}
+});
+}
+</script>

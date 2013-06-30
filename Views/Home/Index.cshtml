@@ -1,0 +1,43 @@
+﻿@{
+    ViewBag.Title = "Página principal";
+}
+<h1> Bienvenidos </h1>
+
+<h2>Eventos próximos:</h2>
+@(Html.Kendo().Grid<Web.Models.Evento>()
+.Name("tblEventos")
+.Columns(columns =>
+{
+    columns.Bound(p => p.nombre).Title("Nombre");
+    columns.Bound(p => p.descripcion);
+    columns.Bound(p => p.fechaInicio.Date);
+    columns.Bound(p => p.precioSocio).Title("Precio Socio (S/.)");
+    columns.Bound(p => p.precioInvitado).Title("Precio Invitado (S/.)");
+})
+.ClientRowTemplate(
+    "<tr><td>" +
+        "<span>#: nombre #</span>" +
+    "</td><td>" +
+        "<span>#: descripcion #</span>" +
+    "</td><td>" +
+        "<span>#: fechaFormateada #</span>" +
+    "</td><td>" +
+        "<span>#: precioSocio #</span>" +
+    "</td><td>" +
+        "<span>#: precioInvitado #</span>" +
+    "</td></tr>"
+)
+.Pageable()
+.DataSource(source => source.Ajax()
+        .Events(e => e.Error("ErrorMessage"))
+        .Read(read => read.Action("leerEventosProximos", "InscribirEventoEmpleado"))
+        .PageSize(5)
+)
+)
+
+<script type="text/javascript">
+    function ErrorMessage(e) {
+        alert("Error al leer")
+    }
+</script>
+
